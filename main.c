@@ -6,16 +6,27 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 04:31:27 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/06 04:34:00 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/10 19:32:12 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "builtins.h"
+#include <unistd.h>
+
+extern char **environ;
 
 int	main(void)
 {
 	char	*input;
+	char	**my_envp;
+	int		exit_status;
+	int		result;
 
+	exit_status = 0;
+	my_envp = copy_envp(environ);
+	if (!my_envp)
+		return (1);
 	while (1)
 	{
 		input = readline("miniconcha> ");
@@ -24,9 +35,17 @@ int	main(void)
 		if (input[0])
 			add_history(input);
 		t_token	*tokens = tokenize(input);
-		print_tokens(tokens);
+		if (tokens && is_builtin(tokens->value) != NOT_BUILTIN)
+		{
+			result = execute_builtin(tokens, &my_envp, &exit_status);
+			if (is_builtin(tokens->value) == EXIT && result == 0)
+				break;
+		}
+		else
+			print_tokens(tokens);
 		free_tokens(tokens);
 		free(input);
 	}
-	return 0;
+	free_envp(my_envp);
+	return exit_status;
 }

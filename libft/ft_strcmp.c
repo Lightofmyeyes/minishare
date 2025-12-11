@@ -1,21 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putunbr.c                                       :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lcosta-a <lcosta-a@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 22:59:51 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/07 19:20:38 by lcosta-a         ###   ########.fr       */
+/*   Created: 2025/12/07 19:18:27 by lcosta-a          #+#    #+#             */
+/*   Updated: 2025/12/07 19:19:52 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_putunbr(unsigned int n)
+int	ft_strcmp(char *s1, char *s2)
 {
-	if (n >= 10)
-		return (ft_putunbr(n / 10) + ft_putchar("0123456789"[n % 10]));
-	else
-		return (ft_putchar("0123456789"[n % 10]));
+	int	i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

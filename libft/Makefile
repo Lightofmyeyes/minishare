@@ -14,6 +14,7 @@ SRCS= \
     ft_memmove.c \
     ft_strlen.c \
     ft_strlcpy.c \
+    ft_strcmp.c \
     ft_strlcat.c \
     ft_toupper.c \
     ft_tolower.c \
@@ -45,8 +46,6 @@ SRCS= \
 	ft_putnbr.c \
 	ft_puthex.c \
 	ft_putptr.c \
-		get_next_line.c \
-		get_next_line_utils.c \
 
 BONUS_SRCS = \
         ft_lstnew_bonus.c \
