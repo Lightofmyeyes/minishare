@@ -58,9 +58,9 @@ void	create_operator_token(t_token **tokens, char **input)
 		if (**input == '|')
 			type = PIPE;
 		else if (**input == '>')
-			type = REDIR_OUT;
+			type = TOK_OUT;
 		else if (**input == '<')
-			type = REDIR_IN;
+			type = TOK_IN;
 		(*input)++;
 	}
 	add_token(tokens, create_token(NULL, 0, type));

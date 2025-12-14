@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 #include "builtins.h"
+#include "executor.h"
+#include "ast_utils.h"
+#include "ast_converter.h"
 #include <unistd.h>
 
 extern char **environ;
@@ -21,7 +24,8 @@ int	main(void)
 	char	*input;
 	char	**my_envp;
 	int		exit_status;
-	int		result;
+	t_node	*ast;
+	t_token	*tokens;
 
 	exit_status = 0;
 	my_envp = copy_envp(environ);
@@ -34,15 +38,16 @@ int	main(void)
 			break ;
 		if (input[0])
 			add_history(input);
-		t_token	*tokens = tokenize(input);
-		if (tokens && is_builtin(tokens->value) != NOT_BUILTIN)
+		tokens = tokenize(input);
+		ast = create_ast_from_tokens(tokens);
+		if (ast)
 		{
-			result = execute_builtin(tokens, &my_envp, &exit_status);
-			if (is_builtin(tokens->value) == EXIT && result == 0)
-				break;
+			if (ast->type == BUILTIN)
+				execute_builtin(tokens, &my_envp, &exit_status);
+			else
+				execute_tree(ast);
+			free_ast(ast);
 		}
-		else
-			print_tokens(tokens);
 		free_tokens(tokens);
 		free(input);
 	}

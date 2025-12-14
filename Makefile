@@ -6,7 +6,7 @@
 #   By: lcosta-a <lcosta-a@student.42.fr>          +#+  +:+       +#+        #
 #                                                +#+#+#+#+#+   +#+           #
 #   Created: 2025/12/06 04:05:00 by lcosta-a        #+#    #+#               #
-#   Updated: 2025/12/06 04:30:00 by lcosta-a       ###   ########.fr         #
+#   Updated: 2025/12/13 21:30:00 by lcosta-a       ###   ########.fr         #
 #                                                                            #
 # ************************************************************************** #
 
@@ -20,8 +20,10 @@ CC = gcc
 CFLAGS = -Wall -Wextra -Werror -I.
 
 # Lista de arquivos fonte do minishell
-SRC = tokenizer.c tokenizer_utils.c token_creator.c token_utils.c builtins.c \
-	builtins_env.c builtins_env_utils.c env_utils.c main.c
+SRC = tokenizer.c tokenizer_utils.c token_creator.c token_utils.c \
+      builtins.c builtins_env.c builtins_env_utils.c env_utils.c \
+      builtins_adapter.c builtins_env_adapter.c ast_converter.c ast_utils.c \
+      executor.c get_path.c handle_redirections.c minishell_utils.c main.c 
 OBJ = $(SRC:.c=.o)
 
 # Configuração da libft

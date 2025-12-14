@@ -15,6 +15,7 @@
 #include "libft/libft.h"
 #include <limits.h>
 #include <unistd.h>
+#include "env_utils.h"
 
 int	ft_cd(t_token *tokens, char ***envp)
 {

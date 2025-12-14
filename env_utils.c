@@ -11,7 +11,91 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "executor.h"
 #include "libft/libft.h"
+#include "env_utils.h"
+
+char **convert_env_list_to_envp(t_list *env_list)
+{
+	int	count;
+	t_list	*current;
+	char	**envp;
+	int	i;
+
+	count = 0;
+	current = env_list;
+	while (current)
+	{
+		count++;
+		current = current->next;
+	}
+	envp = malloc(sizeof(char *) * (count + 1));
+	if (!envp)
+		return NULL;
+	current = env_list;
+	i = 0;
+	while (i < count)
+	{
+		envp[i] = ft_strdup(current->content);
+		if (!envp[i])
+		{
+			while(i > 0)
+				free(envp[--i]);
+			free(envp);
+			return NULL;
+		}
+		current = current->next;
+		i++;
+	}
+	envp[count] = NULL;
+	return envp;
+}
+
+t_list	*convert_envp_to_env_list(char **envp)
+{
+	t_list	*env_list;
+	int	i;
+	char	*content;
+	t_list	*new_node;
+
+	env_list = NULL;
+	i = 0;
+	while (envp[i])
+	{
+		content = ft_strdup(envp[i]);
+		if (!content)
+		{
+			free_env_list(env_list);
+			return NULL;
+		}
+		new_node = malloc(sizeof(t_list));
+		if (!new_node)
+		{
+			free(content);
+			free_env_list(env_list);
+			return NULL;
+		}
+		new_node->content = content;
+		new_node->next = env_list;
+		env_list = new_node;
+	}
+	return env_list;
+}
+
+void	free_env_list(t_list *env_list)
+{
+	t_list	*current;
+	t_list	*next;
+
+	current = env_list;
+	while (current)
+	{
+		next = current->next;
+		free(current->content);
+		free(current);
+		current = next;
+	}
+}
 
 char **copy_envp(char **src)
 {

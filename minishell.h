@@ -23,8 +23,8 @@ typedef enum	e_token_type
 {
 	WORD,
 	PIPE,
-	REDIR_IN,
-	REDIR_OUT,
+	TOK_IN,
+	TOK_OUT,
 	APPEND,
 	HEREDOC,
 	QUOTE_S,
@@ -43,6 +43,7 @@ typedef struct	s_token
 t_token 	*tokenize(char *input);
 void		skip_spaces(char **input);
 int			is_operator(char c);
+int		is_redirection(t_token_type type);
 int			is_double_operator(char *input);
 void		create_word_token(t_token **token, char **input);
 void		create_operator_token(t_token **tokens, char **input);
