@@ -43,7 +43,11 @@ int	main(void)
 		if (ast)
 		{
 			if (ast->type == BUILTIN)
+			{
 				execute_builtin(tokens, &my_envp, &exit_status);
+				if (ast->cmds && ft_strcmp(ast->cmds[0], "exit") == 0)
+					break;
+			}
 			else
 				execute_tree(ast);
 			free_ast(ast);
