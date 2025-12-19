@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/10 18:41:11 by fpedroso         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:37:25 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,7 @@ void    execute_tree(t_node *node)
 		pipe_logic(node);
 	else
 	{
-		temp_cmd.args = node->cmds;
-		temp_cmd.redirections = NULL;
-		temp_cmd.redirections_count = 0;
-		handle_redirections(temp_cmd);
+		handle_redirections(node);
 		if (node->type == EXT_CMD)
 			exec_cmd(node);
 		else if (node->is_pipeline && node->type == BUILTIN)

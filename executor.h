@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:52:35 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/11/22 16:52:35 by fpedroso         ###   ########.fr       */
+/*   Updated: 2025/12/19 17:54:58 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ typedef struct	s_node
 	t_list			*inline_env_list;
 	bool			is_pipeline;
 	char			redirections;
+	t_list			*temp_files;
 } t_node;
 
 void	execute_tree(t_node *node);

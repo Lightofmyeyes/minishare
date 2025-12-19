@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 18:33:42 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/02 18:33:42 by fpedroso         ###   ########.fr       */
+/*   Updated: 2025/12/19 18:42:56 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,23 +25,23 @@ static void set_append_redir(t_redirection redirection);
 static void set_heredoc_redir(t_command cmd, char *heredoc_delim);
 static void redir_error_message(void);
 
-void	handle_redirections(t_command cmd)
+void	handle_redirections(t_node *node)
 {
 	t_redirection_type	redir_type;
 	int	i;
 
 	i = -1;
-	while (++i < cmd.redirections_count)  
+	while (++i < node->redirections_count)  
 	{
-		redir_type = cmd.redirections[i].type;
+		redir_type = node->redirections[i].type;
 		if (redir_type == REDIR_IN)
-			set_stdin_redir(cmd.redirections[i]);
+			set_stdin_redir(node->redirections[i]);
 		else if (redir_type == REDIR_OUT)
-			set_stdout_redir(cmd.redirections[i]);
+			set_stdout_redir(node->redirections[i]);
 		else if (redir_type == REDIR_APPEND)
-			set_append_redir(cmd.redirections[i]);
+			set_append_redir(node->redirections[i]);
 		else if (redir_type == REDIR_HEREDOC)
-			set_heredoc_redir(cmd, cmd.redirections[i].target);
+			set_heredoc_redir(node, node->redirections[i].target);
 		else
 		{
 			redir_error_message();
@@ -50,10 +50,81 @@ void	handle_redirections(t_command cmd)
 	}
 }
 
-static void	set_heredoc_redir(t_command cmd, char *heredoc_delim)
+char *create_temp_file(t_node *node, char *delim)
 {
-	(void)cmd;
-	(void)heredoc_delim;
+	char	*filename;
+	int	fd;
+	char	*line;
+	t_list	*new_node;
+
+	filename = ft_strdup("/tmp/heredoc_XXXXXX");
+	fd = mkstemp(filename);
+	if (fd == -1)
+	{
+		perror("mkstemp");
+		free(filename);
+		return NULL;
+	}
+	line = readline("> ");
+	while (line)
+	{
+		if (ft_strcmp(line, delim) == 0)
+		{
+			free(line);
+			break;
+		}
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+		free(line);
+		line = readline("> ");
+	}
+	close(fd);
+	new_node = ft_lstnew(filename);
+	if (!new_node)
+	{
+		free(filename);
+		return NULL;
+	}
+	ft_lstadd_back(&node->temp_files, new_node);
+	return filename;
+}	
+
+static void	set_heredoc_redir(t_node *node, char *heredoc_delim)
+{
+	char	*heredoc_filepath;
+	
+	heredoc_filepath = create_temp_file(node, heredoc_delim);
+	if (!heredoc_filepath)
+	{
+		perror("heredoc reader");
+		return;
+	}
+	if (dup_file_into_stdin(heredoc_filepath) == -1)
+		perror("heredoc dup2");
+}
+
+static void	dup_file_into_stdin(char *heredoc_filepath)
+{
+	int	heredoc_fd;
+	
+	heredoc_fd = open(heredoc_filepath, O_RDONLY);
+	if (heredoc_fd <  0)
+	{
+		perror("heredoc temp file");
+		return;
+	}
+	dup2(heredoc_fd, STDIN_FILENO);
+	if (close(heredoc_fd) < 0)
+	{
+		perror("heredoc temp file");
+		return;
+	}
+	dup2(heredoc_fd, STDIN_FILENO);
+	if (close(heredoc_fd) < 0)
+	{
+		perror("heredoc temp file close");
+		return;
+	}
 }
 
 static void set_append_redir(t_redirection redirection)
