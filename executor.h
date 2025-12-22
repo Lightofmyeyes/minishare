@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:52:35 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/19 17:54:58 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/22 19:04:00 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include "libft/libft.h"
-#include "redirections.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/errno.h>
 #include <sys/ioctl.h>
+#include "minishell.h"
 
 #define READ	0
 #define WRITE	1
@@ -56,7 +56,8 @@ typedef struct	s_node
 	t_list			*env_list;
 	t_list			*inline_env_list;
 	bool			is_pipeline;
-	char			redirections;
+	t_redirection	*redirections;
+	int				redirections_count;
 	t_list			*temp_files;
 } t_node;
 

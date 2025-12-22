@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 04:31:27 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/10 19:32:12 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/22 16:43:19 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,46 +15,6 @@
 #include "libft/libft.h"
 
 static	t_node *create_simple_command(t_token **tokens);
-
-t_node	*create_ast_from_tokens(t_token *tokens)
-{
-	t_node	*head;
-	t_node	*current;
-	t_node	*node;
-	t_node	*pipe_node;
-
-	head = NULL;
-	current = NULL;
-	while (tokens)
-	{
-		if (tokens->type == PIPE)
-		{
-			pipe_node = malloc(sizeof(t_node));
-			if (!pipe_node)
-				return NULL;
-			ft_memset(pipe_node, 0, sizeof(t_node));
-			pipe_node->type = AST_PIPE;
-			pipe_node->left = head;
-			tokens = tokens->next;
-			pipe_node->right = create_ast_from_tokens(tokens);
-			return pipe_node;
-		}
-		node = NULL;
-		if (tokens->type == WORD)
-			node = create_simple_command(&tokens);
-		else
-			node = create_simple_command(&tokens);
-		if (!node)
-			return NULL;
-		if (!head)
-			head = node;
-		else
-			current->right = node;
-		current = node;
-		tokens = tokens->next;
-	}
-	return head;
-}
 
 static	t_node *create_simple_command(t_token **tokens)
 {

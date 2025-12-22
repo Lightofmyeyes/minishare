@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 18:33:42 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/19 18:42:56 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/22 19:15:04 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,24 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "libft/libft.h"
 #include <stdio.h>
+#include <readline/readline.h>
 
 static void set_stdin_redir(t_redirection redirection);
 static void set_stdout_redir(t_redirection redirection);
 static void set_append_redir(t_redirection redirection);
-static void set_heredoc_redir(t_command cmd, char *heredoc_delim);
+static void set_heredoc_redir(t_node *node, char *heredoc_delim);
 static void redir_error_message(void);
+static int dup_file_into_stdin(char *heredoc_filepath);
 
 void	handle_redirections(t_node *node)
 {
 	t_redirection_type	redir_type;
 	int	i;
 
-	i = -1;
-	while (++i < node->redirections_count)  
+	i = 0;
+	while (i < node->redirections_count)  
 	{
 		redir_type = node->redirections[i].type;
 		if (redir_type == REDIR_IN)
@@ -47,6 +50,7 @@ void	handle_redirections(t_node *node)
 			redir_error_message();
 			return;
 		}
+		i++;
 	}
 }
 
@@ -100,10 +104,10 @@ static void	set_heredoc_redir(t_node *node, char *heredoc_delim)
 		return;
 	}
 	if (dup_file_into_stdin(heredoc_filepath) == -1)
-		perror("heredoc dup2");
+		perror("heredoc dup2 failed");
 }
 
-static void	dup_file_into_stdin(char *heredoc_filepath)
+static int	dup_file_into_stdin(char *heredoc_filepath)
 {
 	int	heredoc_fd;
 	
@@ -111,20 +115,19 @@ static void	dup_file_into_stdin(char *heredoc_filepath)
 	if (heredoc_fd <  0)
 	{
 		perror("heredoc temp file");
-		return;
+		return -1;
 	}
-	dup2(heredoc_fd, STDIN_FILENO);
-	if (close(heredoc_fd) < 0)
+	if (dup2(heredoc_fd, STDIN_FILENO) == -1)
 	{
 		perror("heredoc temp file");
-		return;
+		return -1;
 	}
-	dup2(heredoc_fd, STDIN_FILENO);
 	if (close(heredoc_fd) < 0)
 	{
 		perror("heredoc temp file close");
-		return;
+		return -1;
 	}
+	return 0;
 }
 
 static void set_append_redir(t_redirection redirection)

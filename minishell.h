@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:41:05 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/06 03:07:56 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/22 18:53:09 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,35 @@ typedef enum	e_token_type
 	TOKEN_EOF
 } t_token_type;
 
+typedef enum e_redirection_type
+{
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_APPEND,
+	REDIR_HEREDOC,
+	REDIR_INVALID,
+} t_redirection_type;
+
 typedef struct	s_token
 {
 	char	*value;
 	t_token_type	type;
 	struct s_token	*next;
 } t_token;
+
+typedef struct	s_redirection
+{
+	t_redirection_type	type;
+	char	*arg;
+	char	*target;
+} t_redirection;
+
+typedef struct s_command
+{
+	char	**args;
+	t_redirection *redirections;
+	int	redirections_count;
+} t_command;
 
 t_token 	*tokenize(char *input);
 void		skip_spaces(char **input);

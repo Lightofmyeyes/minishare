@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/10 18:41:11 by fpedroso         ###   ########.fr       */
+/*   Updated: 2025/12/22 15:56:39 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "executor.h"
 
-void	handle_redirections(t_command cmd);
+void	handle_redirections(t_node *cmd);
 void	clean_temp_files(void);
 
 #endif

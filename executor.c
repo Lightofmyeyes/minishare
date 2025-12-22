@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/19 18:37:25 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/22 16:02:58 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	exec_builtin(t_node *node);
 
 void    execute_tree(t_node *node)
 {
-	t_command	temp_cmd;
+//	t_command	temp_cmd;
 
 	if (!node)
 		return;
