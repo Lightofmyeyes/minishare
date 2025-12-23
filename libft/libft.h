@@ -6,7 +6,7 @@
 /*   By: lcosta-a <lcosta-a@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 16:42:18 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/06 05:34:17 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/23 18:03:36 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int				ft_putnbr(int n);
 int				ft_putunbr(unsigned int n);
 int				ft_puthex(unsigned long n, int uppercase);
 int				ft_putptr(void	*ptr);
+int				ft_isspace(int c);
 
 char			*ft_itoa(int n);
 char			*ft_strchr(const char *s, int c);

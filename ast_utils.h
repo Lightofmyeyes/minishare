@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 03:09:12 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/06 03:11:05 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/23 17:07:32 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,6 @@
 # include "executor.h"
 
 void	free_ast(t_node *ast);
+void	free_cmd_array(char **cmd);
 
 #endif

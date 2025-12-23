@@ -6,35 +6,30 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 03:20:10 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/06 03:54:51 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2025/12/23 17:57:53 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include "libft/libft.h"
 
 void	create_word_token(t_token **tokens, char **input)
 {
-	char	*start = *input;
-	int		in_quote = 0;
-	char	quote_char = 0;
+	char	*start;
+	char	quote;
 
-	while (**input)
+	start = *input;
+	while (**input && !is_operator(**input) && !ft_isspace(**input))
 	{
-		if ((**input == '\'' || **input == '"') && !in_quote)
+		if (**input == '\'' || **input == '"')
 		{
-			quote_char = **input;
-			in_quote = 1;
+			quote = **input;
 			(*input)++;
-			continue;
+			while (**input && **input != quote)
+				(*input)++;
+			if (**input)
+				(*input)++;
 		}
-		if (**input == quote_char && in_quote)
-		{
-			in_quote = 0;
-			(*input)++;
-			continue;
-		}
-		if (!in_quote && (**input == ' ' || **input == '\t' || is_operator(**input)))
-			break;
 		else
 			(*input)++;
 	}
