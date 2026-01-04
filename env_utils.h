@@ -19,5 +19,6 @@
 char	**convert_env_list_to_envp(t_list *env_list);
 t_list	*convert_envp_to_env_list(char **envp);
 void	free_env_list(t_list *env_list);
+t_list	*init_env_list(char **envp);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 04:31:27 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/10 19:32:12 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 07:11:55 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,15 +44,12 @@ int adapter_unset(char **args, char **envp)
 
 int adapter_exit(char **args, char **envp)
 {
-	t_token	*tokens;
+	int	exit_status;
 	int	result;
 
 	(void)envp;
-	tokens = create_token_from_args(args);
-	if (!tokens)
-		return 1;
-	result = ft_exit(tokens, NULL);
-	free_tokens(tokens);
+	exit_status = 0;
+	result = ft_exit(args, &exit_status);
 	return result;
 }
 

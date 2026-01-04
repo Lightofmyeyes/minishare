@@ -6,23 +6,26 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:43:36 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/22 18:52:27 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 10:37:55 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include "executor.h"
+#include "builtins.h"
 #include "libft/libft.h"
 
 static t_redirection_type convert_token_to_redir_type(t_token_type type);
+static int is_word_token(t_token_type type);
 static char **token_array_to_cmd(t_token *tokens);
 
-t_node *create_ast_from_tokens(t_token *tokens)
+t_node *create_ast_from_tokens(t_token *tokens, t_list *env_list)
 {
-	t_node	*node;
+	t_node		*node;
 	int		count;
-	t_token	*temp;
+	t_token		*temp;
 	int		i;
+	t_token		*cmd_token;
 
 	node = malloc(sizeof(t_node));
 	if (!node)
@@ -31,6 +34,7 @@ t_node *create_ast_from_tokens(t_token *tokens)
 	node->redirections = NULL;
 	node->redirections_count = 0;
 	node->temp_files = NULL;
+	node->env_list = env_list;
 
 	count = 0;
 	temp = tokens;
@@ -62,16 +66,22 @@ t_node *create_ast_from_tokens(t_token *tokens)
 			temp = temp->next;
 		}
 	}
-	if (tokens->type == WORD)
+	cmd_token = tokens;
+	while (cmd_token && !is_word_token(cmd_token->type))
+		cmd_token = cmd_token->next;
+	if (cmd_token && cmd_token->type == WORD)
 	{
-		node->type = BUILTIN;
-		node->cmds = token_array_to_cmd(tokens);
+		if (is_builtin(cmd_token->value))
+			node->type = BUILTIN;
+		else
+			node->type = EXT_CMD;
+		node->cmds = token_array_to_cmd(cmd_token);
 	}
 	else if (tokens->type == PIPE)
 	{
 		node->type = AST_PIPE;
-		node->left = create_ast_from_tokens(tokens);
-		node->right = create_ast_from_tokens(tokens->next);
+		node->left = create_ast_from_tokens(tokens, env_list);
+		node->right = create_ast_from_tokens(tokens->next, env_list);
 	}
 	return node;
 }
@@ -103,6 +113,11 @@ char	**token_array_to_cmd(t_token *tokens)
 	}
 	cmd[i] = NULL;
 	return cmd;
+}
+
+static int is_word_token(t_token_type type)
+{
+	return (type == WORD);
 }
 
 t_redirection_type convert_token_to_redir_type(t_token_type type)

@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_redirections.h                              :+:      :+:    :+:   */
+/*   utils.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2026/01/04 01:06:16 by lcosta-a         ###   ########.fr       */
+/*   Created: 2026/01/04 05:13:56 by lcosta-a          #+#    #+#             */
+/*   Updated: 2026/01/04 06:17:38 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef HANDLE_REDIRECTIONS_H
-# define HANDLE_REDIRECTIONS_H
+#ifndef UTILS_H
+# define UTILS_H
 
-# include "executor.h"
-# include "ast_utils.h"
+# include "minishell.h"
 
-void	handle_redirections(t_node *node);
-void	clean_temp_files();
-void	restore_stdinout(int stdin_backup, int stdout_backup, int stderr_backup);
+int		count_args(t_token *tokens);
+void	free_args(char **args);
+
 #endif

@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 00:00:00 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/01 18:17:05 by fpedroso         ###   ########.fr       */
+/*   Updated: 2026/01/03 22:46:34 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,69 @@
 static char	*find_in_path(char *cmd, char *path_env);
 static char	*get_path_env(char **envp);
 static char	*join_path(char *dir, char *cmd);
+//static char	*find_next_dir(char *current_dir);
 
+char	*get_path(char **cmds, t_list *env_list)
+{
+	char	*path_env;
+	char	*result;
+	char	**envp;
+	int	i;
+
+	printf("DEBUG: get_path called for command '%s'\n", cmds[0] ? cmds[0] : "(null)");
+	if (!cmds || !cmds[0])
+	{
+		printf("DEBUG: Invalid command\n");
+		return (NULL);
+	}
+	envp = convert_env_list_to_envp(env_list);
+	if (!envp)
+	{
+		printf("DEBUG: Failed to convert env_list to envp\n");
+		return (NULL);
+	}
+	printf("DEBUG: Environment variables:\n");
+	i = 0;
+	while (envp[i])
+	{
+		printf("DEBIG: %s\n", envp[i]);
+		i++;
+	}
+	if (strchr(cmds[0], '/'))
+	{
+		printf("DEBUG: Command contrains '/', treating as path %s\n", cmds[0]);
+		if (access(cmds[0], X_OK) == 0)
+		{
+			printf("DEBUG: Path is valid and executable\n");
+			result = ft_strdup(cmds[0]);
+			free_envp(envp);
+			return (result);
+		}
+		else
+		{
+			printf("DEBUG: Path exists but i not executable or doesnt exist\n");
+		}
+		free_envp(envp);
+		return (NULL);
+	}
+	path_env = get_path_env(envp);
+	if (!path_env)
+	{
+		printf("DEBUG: PATH not found in environment\n");
+		free_envp(envp);
+		return (NULL);
+	}
+	printf("DEBUG: PATH = %s\n", path_env);
+	result = find_in_path(cmds[0], path_env);
+	if (result)
+		printf("DEBUG: Found command at: %s\n", result);
+	else
+		printf("DEBUG: Command not found in path\n");
+	free_envp(envp);
+	return (result);
+}
+
+/*			
 char	*get_path(char **cmds, t_list *env_list)
 {
 	char	*path_env;
@@ -52,6 +114,7 @@ char	*get_path(char **cmds, t_list *env_list)
 	free_envp(envp);
 	return (result);
 }
+*/
 
 static char	*get_path_env(char **envp)
 {
@@ -71,30 +134,59 @@ static char	*get_path_env(char **envp)
 
 static char	*find_in_path(char *cmd, char *path_env)
 {
-	char	*path_copy;
-	char	*dir;
+	int		i;
+	char	**dirs;
 	char	*full_path;
-	char	*saveptr;
-
-	path_copy = ft_strdup(path_env);
-	if (!path_copy)
+	
+	dirs = ft_split(path_env, ':');
+	if (!dirs)
 		return (NULL);
-	dir = strtok_r(path_copy, ":", &saveptr);
-	while (dir)
+	i = 0;
+	while (dirs[i])
 	{
-		full_path = join_path(dir, cmd);
+		printf("DEBUG: tentando diretório: '%s'\n", dirs[i]);
+		full_path = join_path(dirs[i], cmd);
 		if (full_path && access(full_path, X_OK) == 0)
 		{
-			free(path_copy);
+			ft_free_split(dirs);
 			return (full_path);
 		}
 		free(full_path);
-		dir = strtok_r(NULL, ":", &saveptr);
+		i++;
 	}
-	free(path_copy);
+	ft_free_split(dirs);
 	return (NULL);
 }
 
+static char *join_path(char *dir, char *cmd)
+{
+	size_t	dir_len;
+	size_t	cmd_len;
+	size_t	total_len;
+	char	*result;
+	char	*p;
+
+	dir_len = ft_strlen(dir);
+	cmd_len = ft_strlen(cmd);
+	total_len = dir_len + cmd_len + 2;
+	result = malloc(total_len);
+	if (!result)
+		return (NULL);
+	p = result;
+	ft_memcpy(p, dir, dir_len);
+	p += dir_len;
+	if (dir_len > 0 && dir[dir_len - 1] != '/')
+	{
+		*p = '/';
+		p++;
+	}
+	ft_memcpy(p, cmd, cmd_len);
+	p += cmd_len;
+	*p = '\0';
+	return (result);
+}
+
+/*
 static char	*join_path(char *dir, char *cmd)
 {
 	char	*result;
@@ -115,3 +207,15 @@ static char	*join_path(char *dir, char *cmd)
 	
 	return (result);
 }
+*/
+
+/*
+static char *find_next_dir(char *current_dir)
+{
+	while (*current_dir && *current_dir != ':')
+		current_dir++;
+	if (*current_dir == ':')
+		return (current_dir + 1);
+	return (NULL);
+}
+*/

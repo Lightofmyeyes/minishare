@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 18:00:08 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/10 18:05:41 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 11:04:42 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,20 @@
 #include "executor.h"
 #include "libft/libft.h"
 #include "env_utils.h"
+
+void	print_env_list(t_list *env_list)
+{
+	t_list	*current;
+
+	current = env_list;
+	printf("=== ENV LIST ===\n");
+	while (current)
+	{
+		printf("%s\n", (char *)current->content);
+		current = current->next;
+	}
+	printf("====================\n");
+}
 
 char **convert_env_list_to_envp(t_list *env_list)
 {
@@ -78,6 +92,28 @@ t_list	*convert_envp_to_env_list(char **envp)
 		new_node->content = content;
 		new_node->next = env_list;
 		env_list = new_node;
+	}
+	return env_list;
+}
+
+t_list *init_env_list(char **envp)
+{
+	t_list	*env_list;
+	int		i;
+	t_list	*new_node;
+
+	i = 0;
+	env_list = NULL;
+	while(envp[i])
+	{
+		new_node = ft_lstnew(ft_strdup(envp[i]));
+		if (!new_node)
+		{
+			free_env_list(env_list);
+			return NULL;
+		}
+		ft_lstadd_back(&env_list, new_node);
+		i++;
 	}
 	return env_list;
 }

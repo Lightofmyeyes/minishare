@@ -54,6 +54,16 @@ void	handle_redirections(t_node *node)
 	}
 }
 
+void restore_stdinout(int stdin_backup, int stdout_backup, int stderr_backup)
+{
+	dup2(stdin_backup, STDIN_FILENO);
+	dup2(stdout_backup, STDOUT_FILENO);
+	dup2(stderr_backup, STDERR_FILENO);
+	close(stdin_backup);
+	close(stdout_backup);
+	close(stderr_backup);
+}
+
 char *create_temp_file(t_node *node, char *delim)
 {
 	char	*filename;
@@ -189,6 +199,24 @@ static void redir_error_message(void)
 	perror("Invalid redirection");
 }
 
-void	clean_temp_files(void)
+void	clean_temp_files(t_node *node)
 {
+	t_list	*current;
+	t_list	*next;
+
+	if (!node)
+		return;
+	current = node->temp_files;
+	while (current)
+	{
+		next = current->next;
+		if (current->content)
+		{
+			unlink((char *)current->content);
+			free(current->content);
+		}
+		free(current);
+		current = next;
+	}
+	node->temp_files = NULL;
 }

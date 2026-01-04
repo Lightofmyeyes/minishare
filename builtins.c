@@ -6,53 +6,59 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 16:05:59 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/10 18:59:34 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 06:30:31 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtins.h"
 #include "libft/libft.h"
+#include "utils.h"
+#include <unistd.h>
 
 int	is_builtin(char *cmd)
 {
-	if (!ft_strcmp(cmd, "echo"))
-		return (ECHO);
-	if (!ft_strcmp(cmd, "pwd"))
-		return (PWD);
-	if (!ft_strcmp(cmd, "env"))
-		return (ENV);
-	if (!ft_strcmp(cmd, "cd"))
-		return (CD);
-	if (!ft_strcmp(cmd, "export"))
-		return (EXPORT);
-	if (!ft_strcmp(cmd, "unset"))
-		return (UNSET);
-	if (!ft_strcmp(cmd, "exit"))
-		return (EXIT);
-	return (NOT_BUILTIN);
+	return (cmd && (
+		!ft_strcmp(cmd, "echo") ||
+		!ft_strcmp(cmd, "cd") ||
+		!ft_strcmp(cmd, "pwd") ||
+		!ft_strcmp(cmd, "export") ||
+		!ft_strcmp(cmd, "unset") ||
+		!ft_strcmp(cmd, "env") ||
+		!ft_strcmp(cmd, "exit")
+		));
+
 }
 
 int	execute_builtin(t_token *tokens, char ***envp, int *exit_status)
 {
+	char	**args;
+	int		result;
 	(void)envp;
-	if (!tokens)
+
+	args = NULL;
+	if (!tokens || !is_builtin(tokens->value))
 		return (-1);
-	if (is_builtin(tokens->value) != NOT_BUILTIN)
+	if (is_builtin(tokens->value))
 	{
-		if (is_builtin(tokens->value) == ECHO)
+		if (!ft_strcmp(tokens->value, "echo"))
 			return (ft_echo(tokens));
-		else if (is_builtin(tokens->value) == PWD)
+		if (!ft_strcmp(tokens->value, "pwd"))
 			return (ft_pwd());
-		else if (is_builtin(tokens->value) == ENV)
+		if (!ft_strcmp(tokens->value, "env"))
 			return (ft_env(*envp));
-		else if (is_builtin(tokens->value) == CD)
+		if (!ft_strcmp(tokens->value, "cd"))
 			return (ft_cd(tokens, envp));
-		else if (is_builtin(tokens->value) == EXPORT)
+		if (!ft_strcmp(tokens->value, "export"))
 			return (ft_export(tokens, envp));
-		else if (is_builtin(tokens->value) == UNSET)
+		if (!ft_strcmp (tokens->value, "unset"))
 			return (ft_unset(tokens, envp));
-		else if (is_builtin(tokens->value) == EXIT)
-			return (ft_exit(tokens, exit_status));
+		if (!ft_strcmp (tokens->value, "exit"))
+		{
+			args = tokens_to_args(tokens);
+			result = ft_exit(args, exit_status);
+			free_args(args);
+			return result;
+		}
 	}
 	return (-1);
 }

@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:52:35 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/22 19:04:00 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 10:09:00 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,6 @@ typedef struct	s_node
 } t_node;
 
 void	execute_tree(t_node *node);
+void	print_env_list(t_list *env_list);
 
 #endif

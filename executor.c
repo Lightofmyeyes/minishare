@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/22 16:02:58 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 10:20:42 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,13 @@
 static void	pipe_logic(t_node *node);
 static void	exec_left(int pip[2], t_node *node);
 static void	exec_right(int pip[2], t_node *node);
-static void init_builtin_table(t_builtin table[N_BUILTINS]);
+static void 	init_builtin_table(t_builtin table[N_BUILTINS]);
 static void	exec_cmd(t_node *node);
 static int	exec_forked_builtin(t_node *node);
 static int	exec_builtin(t_node *node);
 
 void    execute_tree(t_node *node)
 {
-//	t_command	temp_cmd;
-
 	if (!node)
 		return;
 	if (node->type == AST_PIPE)
@@ -53,8 +51,11 @@ static int	exec_forked_builtin(t_node *node)
 
 	pid = fork();
 	if (pid == CHILD)
+	{
 		exec_builtin(node);
-	wait(NULL);
+		exit(0);
+	}
+	waitpid(pid, NULL, 0);
 	return (1);
 }
 
@@ -64,30 +65,42 @@ static int	exec_builtin(t_node *node)
 	int			i;
 	char		**envp;
 	int		result;
-	t_list		*new_env_list;
+	int		stdin_backup;
+	int		stdout_backup;
+	int		stderr_backup;
+
+	stdin_backup = dup(STDIN_FILENO);
+	stdout_backup = dup(STDOUT_FILENO);
+	stderr_backup = dup(STDERR_FILENO);
 
 	init_builtin_table(builtin_table);
 	i = 0;
 	envp = convert_env_list_to_envp(node->env_list);
 	if (!envp)
+	{
+		restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
 		return -1;
+	}
+	handle_redirections(node);
 	while (i < N_BUILTINS)
 	{
 		if (ft_strcmp(node->cmds[0], builtin_table[i].name) == 0)
 		{
 			result = builtin_table[i].func(node->cmds, envp);
-			new_env_list = convert_envp_to_env_list(envp);
-			if (new_env_list)
-			{
-				free_env_list(node->env_list);
-				node->env_list = new_env_list;
-			}
 			free_envp(envp);
+			restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
+			rl_cleanup_after_signal();
+			rl_replace_line("", 0);
+			rl_on_new_line();
 			return result;
 		}
 		i++;
     	}
 	free_envp(envp);
+	restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
+	rl_cleanup_after_signal();
+	rl_replace_line("", 0);
+	rl_on_new_line();
 	return -1;
 }
 
@@ -107,7 +120,7 @@ static void	exec_cmd(t_node *node)
 			exit(1);
 		}
 		path = get_path(node->cmds, node->env_list);
-		if (!path || execve(path, node->cmds, envp) == -1)
+		if (execve(path, node->cmds, envp) == -1)
 		{
 			free_envp(envp);
 			perror("Execve");
@@ -115,7 +128,7 @@ static void	exec_cmd(t_node *node)
 		}
 		free_envp(envp);
 	}
-	wait(NULL);
+	waitpid(pid, NULL, 0);
 }
 
 void    init_builtin_table(t_builtin table[N_BUILTINS])
@@ -169,7 +182,7 @@ static void	pipe_logic(t_node *node)
 	close(pip[READ]);
 	waitpid(left_pid, NULL, 0);
 	waitpid(right_pid, NULL, 0);
-	clean_temp_files();
+	clean_temp_files(node);
 }
 
 static void	exec_left(int pip[2], t_node *node)

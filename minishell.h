@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:41:05 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/22 18:53:09 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/03 22:40:42 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,6 @@ t_token		*create_token(char *value, int len, t_token_type type);
 void		add_token(t_token **tokens, t_token *new_token);
 void		free_tokens(t_token *tokens);
 void		print_tokens(t_token *tokens);
+void		ft_free_split(char **split);
 
 #endif

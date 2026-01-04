@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 16:01:30 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/07 16:04:25 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 06:33:22 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,9 @@ int	ft_env(char **envp);
 int	ft_cd(t_token *tokens, char ***envp);
 int	ft_export(t_token *tokens, char ***envp);
 int	ft_unset(t_token *tokens, char ***envp);
-int	ft_exit(t_token *tokens, int *exit_status);
+int	ft_exit(char **args, int *exit_status);
+
+char	**tokens_to_args(t_token *tokens);
 
 int	is_numeric(char *str);
 int	unset_env_var(char *name, char ***envp);

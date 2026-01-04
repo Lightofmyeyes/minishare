@@ -1,23 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ast_converter.h                                    :+:      :+:    :+:   */
+/*   tokenizer_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/06 04:31:27 by lcosta-a          #+#    #+#             */
-/*   Updated: 2026/01/04 10:48:09 by lcosta-a         ###   ########.fr       */
+/*   Created: 2025/12/06 03:13:12 by lcosta-a          #+#    #+#             */
+/*   Updated: 2025/12/06 03:18:09 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef AST_CONVERTER_H
-# define AST_CONVERTER_H
+#include "minishell.h"
 
-# include "minishell.h"
-# include "executor.h"
+void	skip_spaces(char **input)
+{
+	while (**input && (**input == ' ' || **input == '\t'))
+		(*input)++;
+}
 
-t_node	*create_ast_from_tokens(t_token *tokens, t_list *env_list);
-t_token	*create_token_from_args(char **args);
-void	free_ast(t_node *node);
+int	is_operator(char c)
+{
+	return (c == '|' || c == '>' || c == '<');
+}
 
-#endif
+int	is_double_operator(char *input)
+{
+	return ((input[0] == '>' && input[1] == '>') ||
+			(input[0] == '<' && input[1] == '<'));
+}

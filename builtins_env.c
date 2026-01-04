@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 17:16:37 by lcosta-a          #+#    #+#             */
-/*   Updated: 2025/12/10 15:39:52 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/04 00:54:22 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,23 +113,27 @@ int	ft_unset(t_token *tokens, char ***envp)
 	return (0);
 }
 
-int ft_exit(t_token *tokens, int *exit_status)
+int ft_exit(char **args, int *exit_status)
 {
 	int	status;
 
 	status = 0;
-	if (!tokens->next)
+	if (args[1])
 	{
-		*exit_status = 0;
-		return (0);
+		if (args[2])
+		{
+			ft_putstr("exit: too manu arguments\n");
+			return (1);
+		}
+		if (!is_numeric(args[1]))
+		{
+			ft_putstr("exit: numeric argument required\n");
+			status = 2;
+			*exit_status = status;
+			return (status);
+		}
+		status = ft_atoi(args[1]);
 	}
-	if (tokens->next->type == WORD && !tokens->next->next)
-	{
-		if (!is_numeric(tokens->next->value))
-			return (2);
-		status = ft_atoi(tokens->next->value);
-		*exit_status = status;
-		return (0);
-	}
-	return (1);
+	*exit_status = status;
+	return (-2);
 }
