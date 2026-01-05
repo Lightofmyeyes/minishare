@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 00:00:00 by fpedroso          #+#    #+#             */
-/*   Updated: 2026/01/03 22:46:34 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/05 16:18:05 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,31 +29,31 @@ char	*get_path(char **cmds, t_list *env_list)
 	char	**envp;
 	int	i;
 
-	printf("DEBUG: get_path called for command '%s'\n", cmds[0] ? cmds[0] : "(null)");
+//	printf("DEBUG: get_path called for command '%s'\n", cmds[0] ? cmds[0] : "(null)");
 	if (!cmds || !cmds[0])
 	{
-		printf("DEBUG: Invalid command\n");
+//		printf("DEBUG: Invalid command\n");
 		return (NULL);
 	}
 	envp = convert_env_list_to_envp(env_list);
 	if (!envp)
 	{
-		printf("DEBUG: Failed to convert env_list to envp\n");
+//		printf("DEBUG: Failed to convert env_list to envp\n");
 		return (NULL);
 	}
-	printf("DEBUG: Environment variables:\n");
+//	printf("DEBUG: Environment variables:\n");
 	i = 0;
 	while (envp[i])
 	{
-		printf("DEBIG: %s\n", envp[i]);
+//		printf("DEBIG: %s\n", envp[i]);
 		i++;
 	}
 	if (strchr(cmds[0], '/'))
 	{
-		printf("DEBUG: Command contrains '/', treating as path %s\n", cmds[0]);
+//		printf("DEBUG: Command contrains '/', treating as path %s\n", cmds[0]);
 		if (access(cmds[0], X_OK) == 0)
 		{
-			printf("DEBUG: Path is valid and executable\n");
+//			printf("DEBUG: Path is valid and executable\n");
 			result = ft_strdup(cmds[0]);
 			free_envp(envp);
 			return (result);
@@ -68,11 +68,11 @@ char	*get_path(char **cmds, t_list *env_list)
 	path_env = get_path_env(envp);
 	if (!path_env)
 	{
-		printf("DEBUG: PATH not found in environment\n");
+//		printf("DEBUG: PATH not found in environment\n");
 		free_envp(envp);
 		return (NULL);
 	}
-	printf("DEBUG: PATH = %s\n", path_env);
+//	printf("DEBUG: PATH = %s\n", path_env);
 	result = find_in_path(cmds[0], path_env);
 	if (result)
 		printf("DEBUG: Found command at: %s\n", result);

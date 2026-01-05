@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2026/01/04 10:20:42 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/05 16:15:47 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void    execute_tree(t_node *node)
 			exec_forked_builtin(node);
 		else if (node->type == BUILTIN)
 			exec_builtin(node);
-		clean_temp_files();
+		clean_temp_files(node);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 18:33:42 by fpedroso          #+#    #+#             */
-/*   Updated: 2025/12/22 19:15:04 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/05 16:22:40 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ void	clean_temp_files(t_node *node)
 	t_list	*current;
 	t_list	*next;
 
-	if (!node)
+	if (!node || !node->temp_files)
 		return;
 	current = node->temp_files;
 	while (current)
