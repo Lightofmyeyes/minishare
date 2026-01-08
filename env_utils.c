@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 18:00:08 by lcosta-a          #+#    #+#             */
-/*   Updated: 2026/01/04 11:04:42 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:38:44 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,3 +174,34 @@ void free_envp(char **envp)
 	}
 	free(envp);
 }
+
+t_list *copy_env_list(t_list *env_list)
+{
+	t_list	*new_list;
+	t_list	*current;
+	t_list	*new_node;
+	char	*new_content;
+
+	new_list = NULL;
+	current = env_list;
+	while (current)
+	{
+		new_content = ft_strdup(current->content);
+		if (!new_content)
+		{
+			free_env_list(new_list);
+			return NULL;
+		}
+		new_node = ft_lstnew(new_content);
+		if (!new_node)
+		{
+			free(new_content);
+			free_env_list(new_list);
+			return NULL;
+		}
+		ft_lstadd_back(&new_list, new_node);
+		current = current->next;
+	}
+	return new_list;
+}
+

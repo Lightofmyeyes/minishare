@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 16:43:36 by lcosta-a          #+#    #+#             */
-/*   Updated: 2026/01/06 18:05:03 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:24:07 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,15 @@ t_node *create_ast_from_tokens(t_token *tokens, t_list *env_list)
 	t_redirection	*redirs;
 	t_token		*cmd_tokens;
 
+//	printf("DEBUG: create_ast_from_tokens - tokens: %p\n", tokens);
 	if (has_pipe(tokens))
+	{
+//		printf("DEBUG: Encontrou PIPE\n");
 		return create_pipe_ast(tokens, env_list);
+	}
 	redirs = collect_redirections(tokens);
 	cmd_tokens = remove_redirections(tokens);
+//	printf("DEBUG: create_ast_from_tokens - redirs: %p, cmd_tokens: %p\n", redirs, cmd_tokens);
 	return create_command_node(cmd_tokens, redirs, env_list);
 }
 
@@ -90,29 +95,38 @@ static t_node *create_pipe_ast(t_token *tokens, t_list *env_list)
 	t_token	*pipe_token;
 	t_token	*left_tokens;
 	t_token	*right_tokens;
-	t_token *prev;
 
-	prev = NULL;
 	node = malloc(sizeof(t_node));
 	if (!node)
 		return NULL;
 	ft_memset(node, 0, sizeof(t_node));
 	node->type = AST_PIPE;
-	node->env_list = env_list;
+	node->env_list = copy_env_list(env_list);
 	pipe_token = tokens;
 	while (pipe_token && pipe_token->type != PIPE)
 	{
-		prev = pipe_token;
 		pipe_token = pipe_token->next;
 	}
-	left_tokens = tokens;
-	right_tokens = pipe_token->next;
-	if (prev)
-		prev->next = NULL;
-	else
-		left_tokens = NULL;
-	node->left = create_ast_from_tokens(left_tokens, env_list);
-	node->right = create_ast_from_tokens(right_tokens, env_list);
+	left_tokens = copy_token_list(tokens, pipe_token);
+	right_tokens = copy_token_list(pipe_token->next, NULL);
+	if (!left_tokens || !right_tokens)
+	{
+		free(node);
+		free_tokens(left_tokens);
+		free_tokens(right_tokens);
+		return NULL;
+	}
+	node->left = create_ast_from_tokens(left_tokens, node->env_list);
+	node->right = create_ast_from_tokens(right_tokens, node->env_list);
+	if (!node->left || !node->right)
+	{
+		free(node);
+		free_tokens(left_tokens);
+		free_tokens(right_tokens);
+		return NULL;
+	}
+	free_tokens(left_tokens);
+	free_tokens(right_tokens);
 	return node;
 }
 
@@ -146,6 +160,8 @@ static t_redirection *collect_redirections(t_token *tokens)
 		}
 		temp = temp->next;
 	}
+	if (count == 0)
+		return NULL;
 	return redirs;
 }
 
@@ -192,9 +208,13 @@ static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_lis
 	if (tokens && tokens->type == WORD)
 	{
 		if (is_builtin(tokens->value))
+		{
 			node->type = BUILTIN;
+		}
 		else
+		{
 			node->type = EXT_CMD;
+		}
 		node->cmds = token_array_to_cmd(tokens);
 	}
 	else

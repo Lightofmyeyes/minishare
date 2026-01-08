@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 03:34:21 by lcosta-a          #+#    #+#             */
-/*   Updated: 2026/01/04 06:21:31 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 15:10:05 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,4 +79,35 @@ void	print_tokens(t_token *tokens)
 		printf("Token: %s | Type: %d\n", current->value, current->type);
 		current = current->next;
 	}
+}
+
+t_token	*copy_token_list(t_token *start, t_token *end)
+{
+	t_token	*new_list;
+	t_token	*current;
+	t_token	*new_token;
+	t_token	*last;
+
+	new_list = NULL;
+	current = start;
+	last = NULL;
+	while (current && current != end)
+	{
+		new_token = create_token(ft_strdup(current->value),
+				ft_strlen(current->value),
+				current->type);
+		if (!new_token)
+		{
+			free_tokens(new_list);
+			return NULL;
+		}
+		if (!new_list)
+			new_list = new_token;
+		else
+			last->next = new_token;
+		new_token->prev = last;
+		last = new_token;
+		current = current->next;
+	}
+	return new_list;	
 }

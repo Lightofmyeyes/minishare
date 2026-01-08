@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 04:31:27 by lcosta-a          #+#    #+#             */
-/*   Updated: 2026/01/04 11:03:01 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:26:50 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ int	main(void)
 	init_readline();
 	while (1)
 	{
-		printf("DEBUG: Iniciando novo comando\n");
 		input = readline("miniconcha> ");
 		if (!input)
 		{
@@ -53,33 +52,33 @@ int	main(void)
 			add_history(input);
 		tokens = tokenize(input);
 		ast = create_ast_from_tokens(tokens, env_list);
-		printf("DEBUG: onde gwen colocou um ternário\n");
 		if (ast)
 		{
+			if (ast->type == AST_PIPE)
+			{
+				execute_tree(ast);
+				free_ast(ast);
+				rl_cleanup_after_signal();
+				rl_replace_line("", 0);
+				rl_on_new_line();
+				rl_redisplay();
+				continue;
+			}
 			if (ast->type == BUILTIN)
 			{
 				result = execute_builtin(tokens, &my_envp, &exit_status);
-				printf("DEBUG: Builtin executado, resultado: %d\n", result);
 				if (result == -2)
 				{
 					free_ast(ast);
 					break;
 				}
-//				free_env_list(ast->env_list);
-//				ast->env_list = convert_envp_to_env_list(my_envp);
 			}
 			else
 			{
-				printf("DEBUG: Executando comando externo\n");
 				execute_tree(ast);
 			}
-			printf("DEBUG: Resetando readline\n");
-			rl_replace_line("", 0);
-			rl_on_new_line();
-			rl_redisplay();
 			free_ast(ast);
 		}
-		printf("DEBUG: Loop concluido, voltando ao inicio\n");
 		free_tokens(tokens);
 		free(input);
 	}

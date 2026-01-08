@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 16:51:07 by fpedroso          #+#    #+#             */
-/*   Updated: 2026/01/05 16:15:47 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 18:27:45 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,26 @@ static int	exec_builtin(t_node *node);
 void    execute_tree(t_node *node)
 {
 	if (!node)
+	{
 		return;
+	}
 	if (node->type == AST_PIPE)
 		pipe_logic(node);
 	else
 	{
 		handle_redirections(node);
 		if (node->type == EXT_CMD)
+		{
 			exec_cmd(node);
+		}
 		else if (node->is_pipeline && node->type == BUILTIN)
+		{
 			exec_forked_builtin(node);
+		}
 		else if (node->type == BUILTIN)
+		{
 			exec_builtin(node);
+		}
 		clean_temp_files(node);
 	}
 }
@@ -116,7 +124,6 @@ static void	exec_cmd(t_node *node)
 		envp = convert_env_list_to_envp(node->env_list);
 		if (!envp)
 		{
-			perror("Failed to convert environment");
 			exit(1);
 		}
 		path = get_path(node->cmds, node->env_list);
@@ -163,20 +170,27 @@ static void	pipe_logic(t_node *node)
 
 	if (pipe(pip) != 0)
 	{
-		perror("Pipe");
 		exit(1);
 	}
 	left_pid = fork();
 	if (left_pid == CHILD)
 	{
-		exec_left(pip, node);
+		if (!node->left)
+		{
+			exit(1);
+		}
+		exec_left(pip, node->left);
 		exit(0);
 	}
 	close(pip[WRITE]);
 	right_pid = fork();
 	if (right_pid == CHILD)
 	{
-		exec_right(pip, node);
+		if (!node->right)
+		{
+			exit(1);
+		}
+		exec_right(pip, node->right);
 		exit(0);
 	}
 	close(pip[READ]);
@@ -190,7 +204,11 @@ static void	exec_left(int pip[2], t_node *node)
 	close(pip[READ]);
 	dup2(pip[WRITE], STDOUT_FILENO);
 	close(pip[WRITE]);
-	execute_tree(node->left);
+	if (node && !node->env_list)
+	{
+		exit(1);
+	}
+	execute_tree(node);
 	exit(0);
 }
 
@@ -198,6 +216,6 @@ static void	exec_right(int pip[2], t_node *node)
 {
 	dup2(pip[READ], STDIN_FILENO);
 	close(pip[READ]);
-	execute_tree(node->right);
+	execute_tree(node);
 	exit(0);
 }

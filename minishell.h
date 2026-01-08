@@ -6,7 +6,7 @@
 /*   By: lcosta-a <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:41:05 by lcosta-a          #+#    #+#             */
-/*   Updated: 2026/01/03 22:40:42 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 17:38:18 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include "libft/libft.h"
 
 typedef enum	e_token_type
 {
@@ -47,6 +48,7 @@ typedef struct	s_token
 	char	*value;
 	t_token_type	type;
 	struct s_token	*next;
+	struct s_token	*prev;
 } t_token;
 
 typedef struct	s_redirection
@@ -68,9 +70,11 @@ void		skip_spaces(char **input);
 int			is_operator(char c);
 int		is_redirection(t_token_type type);
 int			is_double_operator(char *input);
+t_list		*copy_env_list(t_list *env_list);
 void		create_word_token(t_token **token, char **input);
 void		create_operator_token(t_token **tokens, char **input);
 t_token		*create_token(char *value, int len, t_token_type type);
+t_token		*copy_token_list(t_token *start, t_token *end);
 void		add_token(t_token **tokens, t_token *new_token);
 void		free_tokens(t_token *tokens);
 void		print_tokens(t_token *tokens);

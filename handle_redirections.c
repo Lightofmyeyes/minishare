@@ -6,7 +6,7 @@
 /*   By: fpedroso <fpedroso@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 18:33:42 by fpedroso          #+#    #+#             */
-/*   Updated: 2026/01/05 16:22:40 by lcosta-a         ###   ########.fr       */
+/*   Updated: 2026/01/07 14:26:43 by lcosta-a         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,10 @@ void	handle_redirections(t_node *node)
 	t_redirection_type	redir_type;
 	int	i;
 
-	i = 0;
-	while (i < node->redirections_count)  
+	if (node->type == AST_PIPE)
+		return;
+	i = -1;
+	while (++i < node->redirections_count)  
 	{
 		redir_type = node->redirections[i].type;
 		if (redir_type == REDIR_IN)
