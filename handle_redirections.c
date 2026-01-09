@@ -35,9 +35,11 @@ void	handle_redirections(t_node *node)
 
 	if (node->type == AST_PIPE)
 		return;
-	i = -1;
-	while (++i < node->redirections_count)  
+	i = 0;
+	while (i < node->redirections_count)  
 	{
+		printf("DEBUG: Processando redirecionamento %d%d\n", i+1, node->redirections_count);
+		printf("DEBUG: Tipo: %d, Alvo: %s\n", node->redirections[i].type, node->redirections[i].target);
 		redir_type = node->redirections[i].type;
 		if (redir_type == REDIR_IN)
 			set_stdin_redir(node->redirections[i]);
@@ -54,6 +56,7 @@ void	handle_redirections(t_node *node)
 		}
 		i++;
 	}
+	printf("DEBUG: Redirecionamentos concluídos\n");
 }
 
 void restore_stdinout(int stdin_backup, int stdout_backup, int stderr_backup)
@@ -163,7 +166,7 @@ static void set_append_redir(t_redirection redirection)
 static void set_stdout_redir(t_redirection redirection)
 {
 	int	fd;
-
+	
 	fd = open(redirection.target, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd < 0)
 	{
@@ -206,6 +209,18 @@ void	clean_temp_files(t_node *node)
 	t_list	*current;
 	t_list	*next;
 
+	if (node->std_in_backup != -1)
+		dup2(node->std_in_backup, STDIN_FILENO);
+	if (node->std_out_backup != -1)
+		dup2(node->std_out_backup, STDOUT_FILENO);
+	if (node->std_err_backup != -1)
+		dup2(node->std_err_backup, STDERR_FILENO);
+	if (node->std_in_backup != -1)
+		close(node->std_in_backup);
+	if (node->std_out_backup != -1)
+		close(node->std_out_backup);
+	if (node->std_err_backup != -1)
+		close(node->std_err_backup);
 	if (!node || !node->temp_files)
 		return;
 	current = node->temp_files;

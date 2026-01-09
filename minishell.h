@@ -69,6 +69,7 @@ t_token 	*tokenize(char *input);
 void		skip_spaces(char **input);
 int			is_operator(char c);
 int		is_redirection(t_token_type type);
+int		is_space(char c);
 int			is_double_operator(char *input);
 t_list		*copy_env_list(t_list *env_list);
 void		create_word_token(t_token **token, char **input);

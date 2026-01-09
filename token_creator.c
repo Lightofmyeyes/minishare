@@ -16,24 +16,47 @@
 void	create_word_token(t_token **tokens, char **input)
 {
 	char	*start;
-	char	quote;
+	int	len;
+	char	*word;
+	char 	original_char;
 
+	original_char = **input;
 	start = *input;
-	while (**input && !is_operator(**input) && !ft_isspace(**input))
+	if (**input == '"') 
 	{
-		if (**input == '\'' || **input == '"')
-		{
-			quote = **input;
+		printf("DEBUG: Processando aspas duplas\n");
+		(*input)++;
+		start = *input;
+		while (**input && **input != '"')
 			(*input)++;
-			while (**input && **input != quote)
-				(*input)++;
-			if (**input)
-				(*input)++;
-		}
-		else
+		len = *input - start;
+		if (**input == '"') 
 			(*input)++;
 	}
-	add_token(tokens, create_token(start, *input - start, WORD));
+	else if (**input == '\'')
+	{
+		printf("DEBUG: Processando aspas simples\n");
+		(*input)++;
+		start = *input;
+		while (**input && **input != '\'')
+			(*input)++;
+		len = *input - start;
+		if (**input == '\'')
+			(*input)++;
+	}
+	else
+	{
+		printf("DEBUG: Processando palavra sem aspas\n");
+		while (**input && !is_operator(**input) && !is_space(**input))
+			(*input)++;
+		len = *input - start;
+	}
+	printf("DEBUG: Token criado: '%.*s' (tipo %c)\n", len, start, original_char);
+	if (len > 0)
+	{
+		word = ft_substr(start, 0, len);
+		add_token(tokens, create_token(word, len, WORD));
+	}
 }
 
 void	create_operator_token(t_token **tokens, char **input)

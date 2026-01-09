@@ -38,8 +38,11 @@ int	main(void)
 	my_envp = copy_envp(environ);
 	if (!my_envp)
 		return (1);
-	env_list = init_env_list(my_envp);
+	printf("DEBUG: my_envp[0] = %s\n", my_envp[0]);
+	env_list = convert_envp_to_env_list(my_envp);
+	printf("DEBUG: convert_envp_to_env_list concluído\n");
 	init_readline();
+	printf("DEBUG: antes do readline\n");
 	while (1)
 	{
 		input = readline("miniconcha> ");

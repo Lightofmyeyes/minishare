@@ -155,6 +155,11 @@ static t_redirection *collect_redirections(t_token *tokens)
 		if (is_redirection(temp->type))
 		{
 			redirs[i].type = convert_token_to_redir_type(temp->type);
+			if (!temp->next)
+			{
+				free(redirs);
+				return NULL;
+			}
 			redirs[i].target = ft_strdup(temp->next->value);
 			i++;
 		}
@@ -175,7 +180,13 @@ static t_token *remove_redirections(t_token *tokens)
 	current = tokens;
 	while (current)
 	{
-		if (!is_redirection(current->type))
+		if (is_redirection(current->type))
+		{
+			current = current->next;
+			if (current)
+				current = current->next;
+		}
+		else
 		{
 			new_token = create_token(ft_strdup(current->value),
 					ft_strlen(current->value), current->type);
@@ -185,8 +196,9 @@ static t_token *remove_redirections(t_token *tokens)
 				return NULL;
 			}
 			add_token(&new_tokens, new_token);
+			current = current->next;
 		}
-		current = current->next;
+	
 	}
 	return new_tokens;
 }
@@ -194,6 +206,8 @@ static t_token *remove_redirections(t_token *tokens)
 static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_list *env_list)
 {
 	t_node	*node;
+	t_token	*cmd_token;
+	char	*cmd;
 
 	node = malloc(sizeof(t_node));
 	if (!node)
@@ -205,17 +219,22 @@ static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_lis
 		node->redirections_count = count_redirections(redirs);
 	else
 		node->redirections_count = 0;
-	if (tokens && tokens->type == WORD)
+	if (tokens && tokens->type == WORD && tokens->value)
 	{
+		cmd_token = tokens;
+		cmd = ft_strdup(cmd_token->value);
 		if (is_builtin(tokens->value))
 		{
 			node->type = BUILTIN;
+			printf("DEBUG: Builtin reconhecido: %s\n", cmd);
 		}
 		else
 		{
 			node->type = EXT_CMD;
+			printf("DEBUG: Comando externo: %s\n", cmd);
 		}
 		node->cmds = token_array_to_cmd(tokens);
+		free(cmd);
 	}
 	else
 	{
@@ -230,8 +249,12 @@ static int count_redirections(t_redirection *redirs)
 	int	count;
 
 	count = 0;
-	while (redirs && redirs[count].target)
+	while (count < 100)
+	{
+		if(!redirs[count].target)
+			break;
 		count++;
+	}
 	return count;
 }
 

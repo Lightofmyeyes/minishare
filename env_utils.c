@@ -74,6 +74,8 @@ t_list	*convert_envp_to_env_list(char **envp)
 
 	env_list = NULL;
 	i = 0;
+	if (!envp)
+		return NULL;
 	while (envp[i])
 	{
 		content = ft_strdup(envp[i]);
@@ -92,6 +94,7 @@ t_list	*convert_envp_to_env_list(char **envp)
 		new_node->content = content;
 		new_node->next = env_list;
 		env_list = new_node;
+		i++;
 	}
 	return env_list;
 }

@@ -59,6 +59,9 @@ typedef struct	s_node
 	t_redirection	*redirections;
 	int				redirections_count;
 	t_list			*temp_files;
+	int			std_out_backup;
+	int			std_in_backup;
+	int			std_err_backup;
 } t_node;
 
 void	execute_tree(t_node *node);

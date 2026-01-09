@@ -26,41 +26,47 @@ char	*get_path(char **cmds, t_list *env_list)
 	char	*path_env;
 	char	*result;
 	char	**envp;
-	int	i;
+//	int	i;
 
+	printf("DEBUG: get_path - cmd[0] = %s\n", cmds[0]);
 	if (!cmds || !cmds[0])
 	{
+		printf("DEBUG: cmds ou cmds[0] é NULL!\n");
 		return (NULL);
 	}
 	envp = convert_env_list_to_envp(env_list);
 	if (!envp)
 	{
+		printf("DEBUG: envp é NULL\n");
 		return (NULL);
 	}
-	i = 0;
-	while (envp[i])
-	{
-		i++;
-	}
+//	i = 0;
 	if (strchr(cmds[0], '/'))
 	{
 		if (access(cmds[0], X_OK) == 0)
 		{
 			result = ft_strdup(cmds[0]);
 			free_envp(envp);
+			printf("DEBUG: Caminho absoluto não entrado %s\n", result);
 			return (result);
 		}
 		free_envp(envp);
+		printf("DEBUG: Caminho absoluto não encontrado\n");
 		return (NULL);
 	}
 	path_env = get_path_env(envp);
 	if (!path_env)
 	{
+		printf("DEBUG: Path não encontrado no environment\n");
 		free_envp(envp);
 		return (NULL);
 	}
 	result = find_in_path(cmds[0], path_env);
 	free_envp(envp);
+	if (result)
+		printf("DEBUG: Comando encontrado em %s\n", result);
+	else
+		printf("DEBUG: Comando NÃO ENCONTRADO NO PATH\n");
 	return (result);
 }
 

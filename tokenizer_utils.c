@@ -18,9 +18,14 @@ void	skip_spaces(char **input)
 		(*input)++;
 }
 
+int	is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r');
+}
+
 int	is_operator(char c)
 {
-	return (c == '|' || c == '>' || c == '<');
+	return (c == '|' || c == '>' || c == '<' || c == '&');
 }
 
 int	is_double_operator(char *input)

@@ -30,8 +30,14 @@ void    execute_tree(t_node *node)
 {
 	if (!node)
 	{
+		printf("DEBUG: execute_tree node is NULL\n");
 		return;
 	}
+	printf("DEBUG: execute_tree - node type: %d\n", node->type);
+	
+	node->std_in_backup = dup(STDIN_FILENO);
+	node->std_out_backup = dup(STDOUT_FILENO);
+	node->std_err_backup = dup(STDERR_FILENO);
 	if (node->type == AST_PIPE)
 		pipe_logic(node);
 	else
