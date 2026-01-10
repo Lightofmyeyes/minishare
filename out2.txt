@@ -1,3 +1,0 @@
-DEBUG: Processando redirecionamento 36
-DEBUG: Tipo: 0, Alvo: oi.txt
-DEBUG: Processando redirecionamento 46

@@ -210,8 +210,8 @@ static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_lis
 	t_token	*cmd_token;
 	char	*cmd;
 	int	redirections_count;
-	int	i;
-	int	valid_redirs;
+//	int	i;
+//	int	valid_redirs;
 
 	redirections_count = 0;
 	node = malloc(sizeof(t_node));
@@ -234,15 +234,6 @@ static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_lis
 	{
 		cmd_token = tokens;
 		cmd = ft_strdup(cmd_token->value);
-		valid_redirs = 0;
-		i = 0;
-		while(i < node->redirections_count)
-		{
-			if (node->redirections[i].target)
-				valid_redirs++;
-			i++;
-		}
-		node->redirections_count = valid_redirs;
 		if (is_builtin(tokens->value))
 		{
 			node->type = BUILTIN;

@@ -29,11 +29,10 @@ int	is_builtin(char *cmd)
 
 }
 
-int	execute_builtin(t_token *tokens, char ***envp, int *exit_status)
+int	execute_builtin(t_token *tokens, char ***envp)
 {
 	char	**args;
 	int		result;
-	(void)envp;
 
 	args = NULL;
 	if (!tokens || !is_builtin(tokens->value))
@@ -55,7 +54,7 @@ int	execute_builtin(t_token *tokens, char ***envp, int *exit_status)
 		if (!ft_strcmp (tokens->value, "exit"))
 		{
 			args = tokens_to_args(tokens);
-			result = ft_exit(args, exit_status);
+			result = ft_exit(args, *envp);
 			free_args(args);
 			return result;
 		}

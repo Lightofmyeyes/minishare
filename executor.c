@@ -28,6 +28,8 @@ static int	exec_builtin(t_node *node);
 
 void    execute_tree(t_node *node)
 {
+	int	result;
+
 	if (!node)
 	{
 		printf("DEBUG: execute_tree node is NULL\n");
@@ -53,7 +55,12 @@ void    execute_tree(t_node *node)
 		}
 		else if (node->type == BUILTIN)
 		{
-			exec_builtin(node);
+			result = exec_builtin(node);
+			if (node->cmds && ft_strcmp(node->cmds[0], "exit") == 0)
+			{
+				clean_temp_files(node);
+				exit(result);
+			}
 		}
 		clean_temp_files(node);
 	}
@@ -79,9 +86,11 @@ static int	exec_builtin(t_node *node)
 	int			i;
 	char		**envp;
 	int		result;
+	t_list		*new_env_list;
 	int		stdin_backup;
 	int		stdout_backup;
 	int		stderr_backup;
+	char		*status_str;
 
 	stdin_backup = dup(STDIN_FILENO);
 	stdout_backup = dup(STDOUT_FILENO);
@@ -100,16 +109,28 @@ static int	exec_builtin(t_node *node)
 		if (ft_strcmp(node->cmds[0], builtin_table[i].name) == 0)
 		{
 			result = builtin_table[i].func(node->cmds, envp);
+			status_str = ft_itoa(result);
+			if (status_str)
+			{
+				set_env_var("?", status_str, &envp);
+				free(status_str);
+			}
+			new_env_list = convert_envp_to_env_list(envp);
+			if (new_env_list)
+			{
+				free_env_list(node->env_list);
+				node->env_list = new_env_list;
+			}
 			free_envp(envp);
 			return result;
 		}
 		i++;
     	}
 	free_envp(envp);
-	restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
-	rl_cleanup_after_signal();
-	rl_replace_line("", 0);
-	rl_on_new_line();
+//	restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
+//	rl_cleanup_after_signal();
+//	rl_replace_line("", 0);
+//	rl_on_new_line();
 	return -1;
 }
 

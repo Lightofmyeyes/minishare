@@ -44,12 +44,15 @@ int adapter_unset(char **args, char **envp)
 
 int adapter_exit(char **args, char **envp)
 {
-	int	exit_status;
+	t_token *tokens;
 	int	result;
 
 	(void)envp;
-	exit_status = 0;
-	result = ft_exit(args, &exit_status);
+	tokens = create_token_from_args(args);
+	if (!tokens)
+		return 1;
+	result = ft_exit(args, envp);
+	free_tokens(tokens);
 	return result;
 }
 

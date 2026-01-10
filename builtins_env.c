@@ -113,27 +113,25 @@ int	ft_unset(t_token *tokens, char ***envp)
 	return (0);
 }
 
-int ft_exit(char **args, int *exit_status)
+int ft_exit(char **args, char **envp)
 {
 	int	status;
+	(void)envp;
 
 	status = 0;
 	if (args[1])
 	{
 		if (args[2])
 		{
-			ft_putstr("exit: too manu arguments\n");
-			return (1);
+			ft_putstr_fd("exit: too many arguments\n", 2);
+			return 1;
 		}
 		if (!is_numeric(args[1]))
 		{
-			ft_putstr("exit: numeric argument required\n");
-			status = 2;
-			*exit_status = status;
-			return (status);
+			ft_putstr_fd("exit: numeric argument required\n", 2);
+			return 2;
 		}
 		status = ft_atoi(args[1]);
 	}
-	*exit_status = status;
-	return (-2);
+	return status;
 }

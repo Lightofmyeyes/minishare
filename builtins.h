@@ -30,14 +30,14 @@ typedef enum e_builtin_type
 } t_builtin_type;
 
 int	is_builtin(char *cmd);
-int	execute_builtin(t_token *tokens, char ***envp, int *exit_status);
+int	execute_builtin(t_token *tokens, char ***envp);
 int	ft_echo(t_token *tokens);
 int	ft_pwd(void);
 int	ft_env(char **envp);
 int	ft_cd(t_token *tokens, char ***envp);
 int	ft_export(t_token *tokens, char ***envp);
 int	ft_unset(t_token *tokens, char ***envp);
-int	ft_exit(char **args, int *exit_status);
+int	ft_exit(char **args, char **envp);
 
 char	**tokens_to_args(t_token *tokens);
 

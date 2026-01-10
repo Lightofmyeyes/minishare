@@ -30,6 +30,7 @@
 #define READ	0
 #define WRITE	1
 #define CHILD		0
+#define EXIT_CODE	-42
 #define N_BUILTINS	7
 
 typedef struct	s_builtin

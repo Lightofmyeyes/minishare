@@ -1,2 +1,0 @@
-DEBUG: Processando redirecionamento 26
-DEBUG: Tipo: 1, Alvo: out2.txt
