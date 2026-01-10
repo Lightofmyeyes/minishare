@@ -1,0 +1,6 @@
+echo oi > oi.txt y
+ls > ls.txt y
+echo "td bem" >> oi.txt core dump
+echo tdbem >> oi.txt y
+ls - l > out1.txt > out2.txt cria ambos arquivos incerteza do conteúdo
+cat << EOF y

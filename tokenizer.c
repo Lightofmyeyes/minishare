@@ -18,7 +18,10 @@ t_token *tokenize(char *input)
 
 	while (*input)
 	{
-		skip_spaces(&input);
+		if (is_space(*input))
+			skip_spaces(&input);
+		if (*input == '\0')
+			break;
 		if (is_operator(*input))
 			create_operator_token(&tokens, &input);
 		else

@@ -47,7 +47,7 @@ void	create_word_token(t_token **tokens, char **input)
 	else
 	{
 		printf("DEBUG: Processando palavra sem aspas\n");
-		while (**input && !is_operator(**input) && !is_space(**input))
+		while (**input && !is_space(**input) && !is_operator(**input))
 			(*input)++;
 		len = *input - start;
 	}
@@ -63,12 +63,15 @@ void	create_operator_token(t_token **tokens, char **input)
 {
 	t_token_type	type;
 
-	if (is_double_operator(*input))
+	if (**input == '>' && *(*input + 1) == '>')
 	{
-		if ((*input)[0] == '>' && (*input)[1] == '>')
-			type = APPEND;
-		else
-			type = HEREDOC;
+		type = APPEND;
+		*input += 2;
+
+	}
+	else if (**input == '<' && *(*input + 1) == '<')
+	{
+		type = HEREDOC;
 		*input += 2;
 	}
 	else

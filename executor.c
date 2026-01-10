@@ -38,11 +38,11 @@ void    execute_tree(t_node *node)
 	node->std_in_backup = dup(STDIN_FILENO);
 	node->std_out_backup = dup(STDOUT_FILENO);
 	node->std_err_backup = dup(STDERR_FILENO);
+	handle_redirections(node);
 	if (node->type == AST_PIPE)
 		pipe_logic(node);
 	else
 	{
-		handle_redirections(node);
 		if (node->type == EXT_CMD)
 		{
 			exec_cmd(node);
@@ -95,17 +95,12 @@ static int	exec_builtin(t_node *node)
 		restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
 		return -1;
 	}
-	handle_redirections(node);
 	while (i < N_BUILTINS)
 	{
 		if (ft_strcmp(node->cmds[0], builtin_table[i].name) == 0)
 		{
 			result = builtin_table[i].func(node->cmds, envp);
 			free_envp(envp);
-			restore_stdinout(stdin_backup, stdout_backup, stderr_backup);
-			rl_cleanup_after_signal();
-			rl_replace_line("", 0);
-			rl_on_new_line();
 			return result;
 		}
 		i++;

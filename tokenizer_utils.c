@@ -25,11 +25,15 @@ int	is_space(char c)
 
 int	is_operator(char c)
 {
+	printf("DEBUG: is_operator('%c') = %d\n", c,
+			(c == '|' || c == '>' || c == '<' || c == '&'));
 	return (c == '|' || c == '>' || c == '<' || c == '&');
 }
 
 int	is_double_operator(char *input)
 {
+	if (!input|| !input[0] || !input[1])
+		return 0;
 	return ((input[0] == '>' && input[1] == '>') ||
 			(input[0] == '<' && input[1] == '<'));
 }

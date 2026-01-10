@@ -1,0 +1,6 @@
+DEBUG: Redirecionamentos conclu√≠dos
+oi
+DEBUG: Processando redirecionamento 262
+DEBUG: Processando redirecionamento 218
+DEBUG: Tipo: 33, Alvo: 0§Hc
+tdbem

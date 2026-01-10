@@ -148,6 +148,7 @@ static t_redirection *collect_redirections(t_token *tokens)
 	redirs = malloc(sizeof(t_redirection) * count);
 	if (!redirs)
 		return NULL;
+	memset(redirs, 0, sizeof(t_redirection) * count);
 	i = 0;
 	temp = tokens;
 	while (temp && i < count)
@@ -208,7 +209,11 @@ static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_lis
 	t_node	*node;
 	t_token	*cmd_token;
 	char	*cmd;
+	int	redirections_count;
+	int	i;
+	int	valid_redirs;
 
+	redirections_count = 0;
 	node = malloc(sizeof(t_node));
 	if (!node)
 		return NULL;
@@ -216,13 +221,28 @@ static t_node *create_command_node(t_token *tokens, t_redirection *redirs, t_lis
 	node->env_list = env_list;
 	node->redirections = redirs;
 	if (redirs)
-		node->redirections_count = count_redirections(redirs);
+	{
+		redirections_count = count_redirections(redirs);
+		if (redirections_count > 0)
+			node->redirections_count = redirections_count;
+		else
+			node->redirections_count = 0;
+	}
 	else
 		node->redirections_count = 0;
 	if (tokens && tokens->type == WORD && tokens->value)
 	{
 		cmd_token = tokens;
 		cmd = ft_strdup(cmd_token->value);
+		valid_redirs = 0;
+		i = 0;
+		while(i < node->redirections_count)
+		{
+			if (node->redirections[i].target)
+				valid_redirs++;
+			i++;
+		}
+		node->redirections_count = valid_redirs;
 		if (is_builtin(tokens->value))
 		{
 			node->type = BUILTIN;

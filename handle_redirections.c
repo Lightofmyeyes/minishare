@@ -36,19 +36,19 @@ void	handle_redirections(t_node *node)
 	if (node->type == AST_PIPE)
 		return;
 	i = 0;
-	while (i < node->redirections_count)  
+	while (i < node->redirections_count && node->redirections && i < 100)  
 	{
 		printf("DEBUG: Processando redirecionamento %d%d\n", i+1, node->redirections_count);
 		printf("DEBUG: Tipo: %d, Alvo: %s\n", node->redirections[i].type, node->redirections[i].target);
 		redir_type = node->redirections[i].type;
-		if (redir_type == REDIR_IN)
+		if (redir_type == REDIR_HEREDOC)
+			set_heredoc_redir(node, node->redirections[i].target);		
+		else if (redir_type == REDIR_IN)
 			set_stdin_redir(node->redirections[i]);
 		else if (redir_type == REDIR_OUT)
 			set_stdout_redir(node->redirections[i]);
 		else if (redir_type == REDIR_APPEND)
 			set_append_redir(node->redirections[i]);
-		else if (redir_type == REDIR_HEREDOC)
-			set_heredoc_redir(node, node->redirections[i].target);
 		else
 		{
 			redir_error_message();

@@ -73,7 +73,8 @@ void	free_tokens(t_token *tokens)
 void	print_tokens(t_token *tokens)
 {
 	t_token	*current = tokens;
-
+	
+	printf("DEBUG: tokens gerados:\n");
 	while (current)
 	{
 		printf("Token: %s | Type: %d\n", current->value, current->type);

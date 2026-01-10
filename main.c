@@ -29,7 +29,7 @@ int	main(void)
 	char	*input;
 	char	**my_envp;
 	int		exit_status;
-	int		result;
+//	int		result;
 	t_node	*ast;
 	t_token	*tokens;
 	t_list	*env_list;
@@ -67,19 +67,7 @@ int	main(void)
 				rl_redisplay();
 				continue;
 			}
-			if (ast->type == BUILTIN)
-			{
-				result = execute_builtin(tokens, &my_envp, &exit_status);
-				if (result == -2)
-				{
-					free_ast(ast);
-					break;
-				}
-			}
-			else
-			{
-				execute_tree(ast);
-			}
+			execute_tree(ast);
 			free_ast(ast);
 		}
 		free_tokens(tokens);
